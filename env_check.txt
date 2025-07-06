@@ -1,0 +1,3 @@
+✅ Go Version: go version go1.19.1 windows/amd64
+✅ Git Version: git version 2.49.0.windows.1
+✅ OS yang digunakan: Windows 11
