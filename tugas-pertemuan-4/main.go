@@ -7,7 +7,7 @@ import (
 
 func main() {
 	// Test koneksi database
-	config.ConnectDB()
+	//config.ConnectDB()
 
 	// jalankan perintah migrasi
 	if len(os.Args) > 1 && os.Args[1] == "migrate" {

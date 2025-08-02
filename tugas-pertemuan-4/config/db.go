@@ -10,6 +10,8 @@ import (
 	"worker-assignment-perhitungan-nilai-mahasiswa/models"
 )
 
+var DB *gorm.DB // Variabel global untuk menyimpan instance GORM
+
 func createDSN() string {
 	// Memuat variabel koneksi DB dari file .env
 	if err := godotenv.Load(); err != nil {
@@ -45,21 +47,7 @@ func ConnectDB() {
 	}
 	fmt.Println("Berhasil terhubung ke database")
 
-	// Dapatkan instance SQL dari GORM untuk mengelola koneksi
-	sqlDB, err := db.DB()
-	if err != nil {
-		log.Fatal("Gagal mendapatkan database instance:", err)
-	}
-
-	// Instruksikan GORM untuk menutup koneksi database saat aplikasi selesai
-	defer func() {
-		if sqlDB != nil {
-			if err := sqlDB.Close(); err != nil {
-				log.Fatal("Gagal menutup koneksi database:", err)
-			}
-			fmt.Println("Koneksi database ditutup")
-		}
-	}()
+	DB = db // Simpan instance GORM ke variabel global untuk digunakan di tempat lain
 }
 
 // Fungsi untuk melakukan migrasi model ke database
@@ -89,13 +77,20 @@ func SeedMahasiswa() {
 		log.Fatal("Gagal terhubung ke database untuk seeding:", err)
 	}
 
+	var count int64
+	db.Model(&models.Mahasiswa{}).Count(&count)
+	if count > 0 {
+		fmt.Println("Seeding data mahasiswa tidak diperlukan, data sudah ada.")
+		return
+	}
+
 	// Buat contoh data mahasiswa
 	mahasiswa := []models.Mahasiswa{
-		{ID: 1, Nama: "Budi Santoso"},
-		{ID: 2, Nama: "Siti Aminah"},
-		{ID: 3, Nama: "Joko Widodo"},
-		{ID: 4, Nama: "Dewi Sartika"},
-		{ID: 5, Nama: "Rina Marlina"},
+		{Nama: "Budi Santoso"},
+		{Nama: "Siti Aminah"},
+		{Nama: "Joko Widodo"},
+		{Nama: "Dewi Sartika"},
+		{Nama: "Rina Marlina"},
 	}
 
 	// Lakukan seeding data mahasiswa
